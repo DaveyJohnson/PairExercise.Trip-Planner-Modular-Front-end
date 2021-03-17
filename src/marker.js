@@ -1,21 +1,47 @@
 import mapboxgl from "mapbox-gl";
+import geojson from "./geojson";
 
-function buildMarker(type, coords) {
+function buildMarkers(map) {
   const iconURLs = {
     hotel: "http://i.imgur.com/D9574Cu.png",
     restaurant: "http://i.imgur.com/cqR6pUI.png",
     activity: "http://i.imgur.com/WbMOfMl.png"
   };
 
-  const markerDomEl = document.createElement("div"); // Create a new, detached DIV
-  markerDomEl.style.width = "32px";
-  markerDomEl.style.height = "39px";
-  markerDomEl.style.backgroundImage = iconURLs[`${type}`];
+  // add markers to map
+  geojson.features.forEach(function(marker) {
 
-  const mglMarker = new mapboxgl.Marker(markerDomEl).setLngLat(coords);
+    // create a HTML element for each feature
+    var el = document.createElement('div');
+    el.className = 'marker';
+    //el.style.backgroundImage = `url('${iconURLs[`${type}`]}')`;
 
-  return mglMarker;
+    // make a marker for each feature and add to the map
+    new mapboxgl.Marker(el)
+      .setLngLat(marker.geometry.coordinates)
+      .addTo(map);
+  });
 }
 
-export default buildMarker;
+function buildMarker(type, coordinates, map) {
+  const iconURLs = {
+    hotel: "http://i.imgur.com/D9574Cu.png",
+    restaurant: "http://i.imgur.com/cqR6pUI.png",
+    activity: "http://i.imgur.com/WbMOfMl.png"
+  };
+
+  // create a HTML element for each feature
+  var el = document.createElement('div');
+  el.className = 'marker';
+  el.style.backgroundImage = `url('${iconURLs[`${type}`]}')`;
+
+  // const lnglatObj = new mapboxgl.LngLat(coordinates[0], coordinates[1]);
+
+  // make a marker and add to the map
+  new mapboxgl.Marker(el)
+    .setLngLat(coordinates)
+    .addTo(map);
+}
+
+export { buildMarker, buildMarkers }
 
